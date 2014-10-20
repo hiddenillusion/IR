@@ -5,8 +5,6 @@
 #	(while at FireEye)
 # Version 0.0.3
 # Date: 09-24-2014
-# Tests:
-#	- 183 files (2.6GB) took ~7 1/2 mins with 24 search terms
 
 # list of keywords to search on
 keywords=$1
