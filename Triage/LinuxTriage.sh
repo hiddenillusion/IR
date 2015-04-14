@@ -9,7 +9,12 @@
 # (While at FireEye)
 ####################################################
 
-# Some of these commands obviously need root perms #
+# NOTE - Some of these commands obviously need root perms #
+
+### Usage ###
+# 1 - just place it on the system (possibly need to dos2unix it depending on how it's pulled down)
+# 2 - chmod +x LinuxTriage.sh
+# 3 - sudo ./LinuxTriage.sh
 
 Date=`date +%m-%d-%Y_%T`
 dirname=`hostname`
