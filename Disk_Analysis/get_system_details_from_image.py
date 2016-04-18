@@ -208,6 +208,7 @@ import sys
 import time
 import json
 from collections import defaultdict
+from StringIO import StringIO
 
 try:
     import pyewf
@@ -319,6 +320,7 @@ class RegistryInfo(object):
         @return: a dictionary
         """
         result = {}
+        results = []
         hives = {}
         hives['system_hive'] = "/Windows/System32/Config/SYSTEM"
         hives['software_hive'] = "/Windows/System32/Config/SOFTWARE"
@@ -326,8 +328,13 @@ class RegistryInfo(object):
         for hive_type, hive_path in hives.iteritems():
             try:
                 file_obj = self._filesystem_obj.open(hive_path)
+                file_data = file_obj.read_random(0,file_obj.info.meta.size)
                 # if this fails, refer to https://github.com/williballenthin/python-registry/issues/59
-                registry = Registry.Registry(get_file_data(file_obj))
+                #registry = Registry.Registry(get_file_data(contents))
+                contents = StringIO()
+                contents.write(file_data)
+                contents.seek(0)
+                registry = Registry.Registry(contents)
             except IOError as err: #Path no found
                 return
 
@@ -388,6 +395,7 @@ class RegistryInfo(object):
         return os_dict
 
 # https://github.com/py4n6/pytsk/blob/master/examples/images.py#L71
+# To-Do: This has not been tested
 class SplitImage(pytsk3.Img_Info):
     """Virtualize access to split images.
     Note that unlike other tools (e.g. affuse) we do not assume that the images
@@ -576,5 +584,6 @@ if __name__ == "__main__":
 
         partitions.append(partition_dict)
     partitions.append([evidence_files])
+
 
     print(json.dumps(result, indent=4, sort_keys=True))
