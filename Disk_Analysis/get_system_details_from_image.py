@@ -94,11 +94,6 @@ $ python get_system_details_from_image.py -i /mnt/evidence/vmdk1
                 ],
                 "version": [
                     {
-                        "/etc/hostname": [
-                            "user-vm-ubuntu"
-                        ]
-                    },
-                    {
                         "/etc/lsb-release": [
                             {
                                 "DISTRIB_CODENAME": "precise",
@@ -265,7 +260,6 @@ class LinuxInfo(object):
         paths['hostname'] = ['/etc/hostname']
         paths['version'] = [
                             '/etc/centos-release',
-                            '/etc/hostname',
                             '/etc/lsb-release',
                             '/etc/redhat-release',
                             '/proc/version'
