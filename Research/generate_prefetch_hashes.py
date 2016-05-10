@@ -163,12 +163,16 @@ def iterate_devices():
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser(description='Calculates Prefetch hashes based on a given file/kernel path.')
-	parser.add_argument('-i', '--input', action='store', help="Path to calculate hash on or path to a file containing multiple paths (one per line). \
-															Paths can be in 3 forms:\
-															'Users\User\AppData\Local\Temp\svchost.exe', \
-															'Users\User\AppData\Local\Temp\svchost.exe', or \
-															'\device\harddiskvolume1\Users\User\AppData\Local\Temp\svchost.exe'", required=True)
-	parser.add_argument('-b', '--brute_force', action='store_true', help='Iterate possible device paths when calculating Prefetch path hashes')
+	parser.add_argument('-i', '--input', action='store',
+		help="Path to calculate hash on or path to a file containing multiple paths (one per line). \
+					Paths can be in 3 forms:\
+					'C:\Users\User\AppData\Local\Temp\svchost.exe', \
+					'Users\User\AppData\Local\Temp\svchost.exe', or \
+					'\device\harddiskvolume1\Users\User\AppData\Local\Temp\svchost.exe'", required=True)
+	parser.add_argument('-b', '--brute_force', action='store_true',
+		help='Iterate possible device paths when calculating Prefetch path hashes. \
+					If using this option, have entries without a device/mount point preceding it \
+					like "Users\User\AppData\Local\Temp\svchost.exe"')
 	args = vars(parser.parse_args())
 
 	path = args['input']
