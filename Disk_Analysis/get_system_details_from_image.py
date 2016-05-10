@@ -196,6 +196,146 @@ $ python get_system_details_from_image.py -i /mnt/evidence/vmdk1
         ]
     ]
 }
+
+$ get_system_details_from_image.py -t ewf -i /mnt/evidence.E01
+{
+    "image_size": {
+        "bytes": "250000000000",
+        "gb": "232.830643654",
+        "mb": "238418.579102"
+    },
+    "partition_details": {
+        "block_size": "512",
+        "offset": "0",
+        "part_count": "4",
+        "type": "TSK_VS_TYPE_DOS"
+    },
+    "partition_table": [
+        {
+            "description": "Primary Table (#0)",
+            "filesystem": "UNSUPPORTED",
+            "flags": "TSK_VS_PART_FLAG_META",
+            "length": "1",
+            "mount_start": "0",
+            "partition_number": "0",
+            "size": {
+                "bytes": "512",
+                "gb": "4.76837158203e-07",
+                "mb": "0.00048828125"
+            },
+            "slot": "-1",
+            "start": "0",
+            "table_number": "-1"
+        },
+        {
+            "description": "Unallocated",
+            "filesystem": "UNSUPPORTED",
+            "flags": "TSK_VS_PART_FLAG_UNALLOC",
+            "length": "63",
+            "mount_start": "0",
+            "partition_number": "1",
+            "size": {
+                "bytes": "32256",
+                "gb": "3.00407409668e-05",
+                "mb": "0.03076171875"
+            },
+            "slot": "-1",
+            "start": "0",
+            "table_number": "-1"
+        },
+        {
+            "description": "NTFS / exFAT (0x07)",
+            "filesystem": "TSK_FS_TYPE_NTFS_DETECT",
+            "flags": "TSK_VS_PART_FLAG_ALLOC",
+            "length": "488263482",
+            "mount_start": "32256",
+            "partition_number": "2",
+            "size": {
+                "bytes": "249990902784",
+                "gb": "232.822171211",
+                "mb": "238409.90332"
+            },
+            "slot": "0",
+            "start": "63",
+            "system_details": {
+                "CSDVersion": "Service Pack 3",
+                "ComputerName": "TEST-PC",
+                "InstallDate (UTC)": "2013-07-12 02:11:00",
+                "PathName": "C:\\WINDOWS",
+                "ProductId": "74587-OEM-003344-25345",
+                "ProductName": "Microsoft Windows XP",
+                "RegisteredOrganization": "Some Company",
+                "RegisteredOwner": "Owner"
+            },
+            "table_number": "0"
+        },
+        {
+            "description": "Unallocated",
+            "filesystem": "UNSUPPORTED",
+            "flags": "TSK_VS_PART_FLAG_UNALLOC",
+            "length": "17705",
+            "mount_start": "249990935040",
+            "partition_number": "3",
+            "size": {
+                "bytes": "9064960",
+                "gb": "0.00844240188599",
+                "mb": "8.64501953125"
+            },
+            "slot": "-1",
+            "start": "488263545",
+            "table_number": "-1"
+        },
+        [
+            {
+                "evidence_files": [
+                    "/mnt/evidence.E01",
+                    "/mnt/evidence.E02",
+                    "/mnt/evidence.E03",
+                    "/mnt/evidence.E04",
+                    "/mnt/evidence.E05",
+                    "/mnt/evidence.E06",
+                    "/mnt/evidence.E07",
+                    "/mnt/evidence.E08",
+                    "/mnt/evidence.E09",
+                    "/mnt/evidence.E10",
+                    "/mnt/evidence.E11",
+                    "/mnt/evidence.E12",
+                    "/mnt/evidence.E13",
+                    "/mnt/evidence.E14",
+                    "/mnt/evidence.E15",
+                    "/mnt/evidence.E16",
+                    "/mnt/evidence.E17",
+                    "/mnt/evidence.E18",
+                    "/mnt/evidence.E19",
+                    "/mnt/evidence.E20",
+                    "/mnt/evidence.E21",
+                    "/mnt/evidence.E22",
+                    "/mnt/evidence.E23",
+                    "/mnt/evidence.E24",
+                    "/mnt/evidence.E25",
+                    "/mnt/evidence.E26",
+                    "/mnt/evidence.E27",
+                    "/mnt/evidence.E28",
+                    "/mnt/evidence.E29",
+                    "/mnt/evidence.E30",
+                    "/mnt/evidence.E31",
+                    "/mnt/evidence.E32",
+                    "/mnt/evidence.E33",
+                    "/mnt/evidence.E34",
+                    "/mnt/evidence.E35",
+                    "/mnt/evidence.E36",
+                    "/mnt/evidence.E37",
+                    "/mnt/evidence.E38",
+                    "/mnt/evidence.E39",
+                    "/mnt/evidence.E40",
+                    "/mnt/evidence.E41",
+                    "/mnt/evidence.E42"
+                ]
+            }
+        ]
+    ]
+}
+
 '''
 
 import os
@@ -483,7 +623,7 @@ def get_file_info(file_obj):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Grabs basic system info from EnCase EWF (E01) & RAW DD images.')
-    parser.add_argument('-i', '--input', metavar="IMAGE", nargs="+", action='store', help='Path to evidence file(s)', required=True)
+    parser.add_argument('-i', '--input', metavar="IMAGE", action='store', help='Path to evidence file (First part of segmented/split image)', required=True)
     parser.add_argument('-s', '--sector_size', metavar="SECTORS", action='store', help='Sector size of image (Default is taken from mmls)', type=int)
     parser.add_argument('-t', '--image_type', metavar="TYPE", action='store', choices=['ewf', 'raw'], help='Image type (Default is raw)', default='raw')
     args = vars(parser.parse_args())
