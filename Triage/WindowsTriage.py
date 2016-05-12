@@ -135,7 +135,7 @@ def doWork(path, output_dir):
 						'\\Windows\\System32\\config',
 						'\\Windows\\System32\\winevt\\Logs',						
 						'\\Windows\\SysWOW64\\Tasks',
-						'\\WINNT\\System32\\config\\',
+						'\\WINNT\\System32\\config',
 			]
 
 	# Process artifact files with exact locations
