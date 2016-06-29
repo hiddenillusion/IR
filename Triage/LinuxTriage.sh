@@ -4,77 +4,112 @@
 # LinuxTriage was created by Glenn P. Edwards Jr.
 #	 	http://hiddenillusion.blogspot.com
 # 				@hiddenillusion
-# Version 0.1 
-# Date: 11/19/2013
+# Date: 2013-11-19
 # (While at FireEye)
 ####################################################
-
-# NOTE - Some of these commands obviously need root perms #
 
 ### Usage ###
 # 1 - just place it on the system (possibly need to dos2unix it depending on how it's pulled down)
 # 2 - chmod +x LinuxTriage.sh
 # 3 - sudo ./LinuxTriage.sh
 
-Date=`date +%m-%d-%Y_%T`
-dirname=`hostname`
+# While not all commands require root, just easier
+if [ "$EUID" -ne 0 ]; then
+	echo "[!] Please run as root"
+  exit 1
+fi
+
+dirname=`hostname`_triage
+
 if [ ! -d dirname ]; then
 	mkdir $dirname
 fi
 
-cd $dirname
-outty="$Date.txt"
+Date=`date +%m-%d-%Y_%T`
+outty="process.log"
+triage_dir=$dirname/$Date
+
+mkdir $triage_dir
+cd $triage_dir
 
 echo "[+] Collection Started: $Date"
 echo "[+] Collection Started: $Date" >> $outty
 echo "======================================================" >> $outty
 
-# Get all bash history files before they're modified too much
+history_files=(".bash_history"
+	".sh_history"
+	".tsch_history"
+	".tcsh_history"
+	".sqlite_history"
+	".lesshst"
+	".viminfo"
+);
 
-find / -name ".bash_history" | while read f; do cat $f > `echo $f | sed 's/\//_/g'`.txt;done
+misc_files=("authorized_keys"
+	"known_hosts"
+	".bashrc"
+	".bash_logout"
+);
 
 cmds=("ps -eaf"
-	"ps aux"
+	"ps auwwx"
+	"netstat -rn"
+	"netstat -tulpan"
 	"lsof -n"
 	"lsof -w"
 	"w"
-	"who"
+	"who -a"
 	"last -a -i"
 	"lastlog"
+	"lastb"
 	"df -k"
 	"df -HaT"
 	"lsmod"
+	"ifconfig -a"
+	"mount"
+	"crontab -l"
+	"fdisk -l"
+	"lsblk"
+	"free"
 	"hostname"
 	"id"
 	"uname"
 	"uname -a"
-	"hostid"
-	"ifconfig -a"
-	"netstat -rn"
-	"cat /etc/group"
-	"mount"
-	"crontab -l"
-	"fdisk -l"
+	"hostid"	
 	"cat /proc/version"
+	"cat /proc/meminfo"
 	"cat /etc/hosts"
-	"cat /var/log/messages"
-	"cat /var/log/secure"
-	"cat /var/log/sudo"
+	"cat /etc/os-release"
 	"rpm -qa"
-	"lastb"
-	);
-
-cmds2=("cat /etc/passwd"
-	"cat /var/log/auth.log"
-	"cat /var/log/apache2/access.log"
-	"cat /var/log/apache2/error.log"
-	"cat /etc/syslog.conf"
 	"dpkg --get-selections"
-	"cat /etc/inetd.conf"
-	);
+);
 
-echo "[-] Running command set 1"
-# Commands that are having their output put into the main file
+read_contents=("/var/log/sudo"
+	"/var/log/secure"
+	"/var/log/auth.log"
+	"/var/log/audit/audit.log"
+	"/var/log/messages"
+	"/var/log/apache2/access.log"
+	"/var/log/apache2/error.log"
+	"/etc/passwd"
+	"/etc/group"
+	"/etc/syslog.conf"
+	"/etc/inetd.conf"
+	"/etc/audit/auditd.conf"
+	"/etc/ssh/sshd_config"
+	"/etc/fstab"
+	"/etc/mtab"
+);
+
+echo "[-] Getting history files"
+# Get all *history*-ish files before they're modified too much
+for hf in "${history_files[@]}"; do
+	echo "[-] Looking for $hf" >> $outty
+	find / -name $hf | while read f; do cat $f > `echo $f | sed 's/\//_/g'`.txt;done
+done
+
+echo "[-] Running basic triage commands"
+# Commands that are having their output put into the main files
 for c in "${cmds[@]}"; do
 	echo "------------------------------------------------------" >> $outty
 	echo "$c" >> $outty
@@ -82,14 +117,20 @@ for c in "${cmds[@]}"; do
 	$c &>> $outty
 done
 
-echo "[-] Running command set 2"
+echo "[-] Running read content commands"
 # Commands that are having their output put into their own file
-for c2 in "${cmds2[@]}"; do
-	echo "------------------------------------------------------" >> $outty
-	echo "$c2" >> $outty
-	echo "------------------------------------------------------" >> $outty
-	output=`echo $c2 | sed s'/[ \/]/_/g'`.txt
-	$c2 1> $output 2>>$outty
+for rc in "${read_contents[@]}"; do
+	echo "[-] Looking for $rc" >> $outty
+	if [ -f $rc ]; then
+		output=`echo $rc | sed s'/[ \/]/_/g'`
+		cat $rc 1> $output 2>>$outty
+	fi
+done
+
+echo "[-] Getting misc. files of interest"
+for mf in "${misc_files[@]}"; do
+	echo "[-] Looking for $mf" >> $outty
+	find / -name $mf | while read f; do cat $f > `echo $f | sed 's/\//_/g'`.txt;done
 done
 
 # Get some specific information about connected disks
