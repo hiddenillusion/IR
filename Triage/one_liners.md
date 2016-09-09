@@ -1,0 +1,11 @@
+Find files of interest and copy them to another location while keeping full paths (but renaming to a safe path) in a single file name
+
+Category | Artifact(s) | Platforms | One-liner
+--- | --- | --- | ---
+Registry | all user-related Windows registry hives | Win | `find /path/to/evidence -type f | egrep -i '(usrclass\.dat$|ntuser\.dat$)' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/registry_hives/$safe_name"; done`
+Registry | all system-related Windows registry hives | Win | `find /path/to/evidence -type f | egrep -i '(software|system|security|sam|amcache.hve)$' | egrep -i '(Windows\/AppCompat\/Programs|Windows\/System32\/config)'| while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/registry_hives/$safe_name"; done`
+Event Logs | all Windows event logs | Win | `find /path/to/evidence -type f | egrep -i '(\.evt$|\.evtx$)' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/event_logs/$safe_name"; done`
+Shortcuts | all shortcut files | Win | `find /path/to/evidence -type f | egrep -i '(\.lnk$|(Automatic|Custom)Destination)' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/shortcuts/$safe_name"; done`
+Internet | all Internet Explorer ESE databases | Win | `find /path/to/evidence -type f | egrep -i '(WebCacheV.*\.dat)$' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/internet/$safe_name"; done`
+Internet | all Google Chrome databases of interest | Mac/Win | `find /path/to/evidence -type f | egrep -i '(History|Archived History|Cookies|Login Data|Top Sites|Web Data)$' | egrep '(\/Google\/Chrome\/Default|Google\/Chrome\/User Data\/Default)' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/internet/$safe_name"; done`
+Internet | all Mozilla Firefox databases of interest | Mac/Win | `find /path/to/evidence -type f | egrep -i '(cookies|downloads|formhistory|places|signons|permissions|addons|extensions|content-prefs|healthreport|webappstore)\.sqlite$' | egrep -i '(Firefox\/Profiles)' | while read line; do safe_name=$(echo $line | sed s'/[ \/()]/_/g'); cp "$line" "/path/to/save/internet/$safe_name"; done`
