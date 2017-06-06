@@ -365,4 +365,4 @@ if __name__ == '__main__':
 		sys.stdout.write("[!] Could not delete uncompressed artifacts '{0}'\n".format(output_dir))
 		sys.stdout.write("{0}".format(err))
 	'''
-	sys.stdout.write("[+] Don't forget to delete uncompressed artifacts '{0}'\n".format(zip_name))
+	#sys.stdout.write("[+] Don't forget to delete uncompressed artifacts '{0}'\n".format(zip_name))
