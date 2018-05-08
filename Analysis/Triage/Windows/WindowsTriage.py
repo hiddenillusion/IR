@@ -245,6 +245,8 @@ def doWork(path, output_dir):
 						'AppData\\Local\\Microsoft\\Terminal Server Client\\Cache\\bcache22.bmc',
 						'Default.rdp',
 						'AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadline\\ConsoleHost_history.txt',
+						#'AppData\Local\ConnectedDevicesPlatform\L.<profile>\ActivitiesCache.db',
+						'ActivitiesCache.db',
 			]
 
 	# Make life easier and just don't have trailing slashes here
