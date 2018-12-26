@@ -1,6 +1,6 @@
 @echo off
 :: IR Sniper Script created by:
-:: 		Glenn P. Edwards Jr.
+::     Glenn P. Edwards Jr.
 :: https://hiddenillusion.github.com
 ::       @hiddenillusion
 :: Version 0.1.2
@@ -9,8 +9,8 @@
 
 
 :: To-Do
-::	[X] delete folder with files after completion?
-::	[ ] test if this script works from a share or removable media
+::  [X] delete folder with files after completion?
+::  [ ] test if this script works from a share or removable media
 
 ::check perms
 net session >nul 2>&1
@@ -36,15 +36,37 @@ set dirname="%computername%_%FullDate%"
 mkdir "%dirname%"
 set tool_prefix=ir_
 
-ECHO [+] Collection started at %DATE%  %TIME%
-ECHO [+] Collection started at %DATE%  %TIME% >> %dirname%\%computername%.txt
+ECHO [+] Collection started at %DATE% %TIME%
+ECHO [+] Collection started at %DATE% %TIME% >> %dirname%\%computername%.txt
 
 :: Basic stuff
 ECHO [+] Basic Volatile Data
 ECHO [+] Basic Volatile Data >> %dirname%\%computername%.txt
-ipconfig >> %dirname%\%computername%_ipconfig.txt
-ipconfig /displaydns >> %dirname%\%computername%_ipconfig_dns.txt
-systeminfo >> %dirname%\%computername%_systeminfo.txt
+:: Network
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ECHO " ipconfig " >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ipconfig >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ECHO " ipconfig /displaydns" >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ipconfig /displaydns >>%dirname%\%computername%.txt
+:: System
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ECHO " systeminfo " >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+systeminfo >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+:: Drives
+ECHO " fsutil fsinfo drives " >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+fsutil fsinfo drives >> %dirname%\%computername%.txt
+:: List all Windows Patches & Updates
+::  ref for versions :: https://www.lifewire.com/windows-version-numbers-2625171
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+ECHO " wmic qfe list full " >> %dirname%\%computername%.txt
+ECHO "-----------------------------------------------------" >> %dirname%\%computername%.txt
+wmic qfe list full /format:csv >> %dirname%\%computername%.txt
 
 :: Will need to do some checking of the record size/UseLargeFRS because will fail on $MFT records @ 4k instead of standard 512
 ECHO [-] $MFT
@@ -62,101 +84,107 @@ Tools\%tool_prefix%FGET.exe -extract %windir%\system32\config\sam %dirname%\%com
 IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) ELSE (GOTO 64bit)
 
 :32bit
-	set cpu=32
-	ECHO [+] CPU is 32 bit
-	ECHO [+] CPU is 32 bit >> %dirname%\%computername%.txt
+  set cpu=32
+  ECHO [+] CPU is 32 bit
+  ECHO [+] CPU is 32 bit >> %dirname%\%computername%.txt
 
-	ECHO [-] Prefetch
-	ECHO [-] Prefetch >> %dirname%\%computername%.txt
-	mkdir %dirname%\Prefetch\
-	Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\Prefetch  %dirname%\Prefetch >> %dirname%\%computername%.txt
-	ECHO [-] Tasks
-	ECHO [-] Tasks >> %dirname%\%computername%.txt
-	mkdir %dirname%\Tasks\
-	Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\Tasks  %dirname%\Tasks >> %dirname%\%computername%.txt
+  ECHO [-] Prefetch
+  ECHO [-] Prefetch >> %dirname%\%computername%.txt
+  mkdir %dirname%\Prefetch\
+  Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\Prefetch %dirname%\Prefetch >> %dirname%\%computername%.txt
+  ECHO [-] Tasks
+  ECHO [-] Tasks >> %dirname%\%computername%.txt
+  mkdir %dirname%\Tasks\
+  Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\Tasks %dirname%\Tasks >> %dirname%\%computername%.txt
+  ECHO [-] Hashing
+  ECHO [-] Hashing >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%md5deep.exe -r -s C:\ >> %dirname%\%computername%_md5.txt
 
-	::version_check
-	ver | find "Version 6." >nul
-	IF %ERRORLEVEL% NEQ 0 (GOTO WinXP) ELSE (GOTO Win7)
+  ::version_check
+  ver | find "Version 6." >nul
+  IF %ERRORLEVEL% NEQ 0 (GOTO WinXP) ELSE (GOTO Win7)
 
 :64bit
-	set cpu=64
-	ECHO [+] CPU is 64 bit
-	ECHO [+] CPU is 64 bit >> %dirname%\%computername%.txt
+  set cpu=64
+  ECHO [+] CPU is 64 bit
+  ECHO [+] CPU is 64 bit >> %dirname%\%computername%.txt
 
-	ECHO [-] Prefetch
-	ECHO [-] Prefetch >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\Prefetch *.pf %dirname%\Prefetch >> %dirname%\%computername%.txt
-	ECHO [-] Tasks
-	REM for some reason I don't think this copies everything...
-	ECHO [-] Tasks >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
-	Tools\%tool_prefix\x64\%Robocopy64.exe %windir%\System32\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
+  ECHO [-] Prefetch
+  ECHO [-] Prefetch >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\Prefetch *.pf %dirname%\Prefetch >> %dirname%\%computername%.txt
+  ECHO [-] Tasks
+  REM for some reason I don't think this copies everything...
+  ECHO [-] Tasks >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
+  Tools\%tool_prefix\x64\%Robocopy64.exe %windir%\System32\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
+  ECHO [-] Hashing
+  ECHO [-] Hashing >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%md5deep64.exe -r -s C:\ >> %dirname%\%computername%_md5.txt
 
-	::version_check
-	ver | find "Version 6." >nul
-	IF %ERRORLEVEL% NEQ 0 (GOTO WinXP) ELSE (GOTO Win7)
+  ::version_check
+  ver | find "Version 6." >nul
+  IF %ERRORLEVEL% NEQ 0 (GOTO WinXP) ELSE (GOTO Win7)
 
 :WinXP
-	Echo [+] WinXP
-	ECHO [-] Event logs
-	ECHO [-] Event logs >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\AppEvent.Evt %dirname%\%computername%_eventLog_Application.evt >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\SecEvent.Evt %dirname%\%computername%_eventLog_Security.evt >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\SysEvent.Evt %dirname%\%computername%_eventLog_System.evt >> %dirname%\%computername%.txt
+  Echo [+] WinXP
+  ECHO [-] Event logs
+  ECHO [-] Event logs >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\AppEvent.Evt %dirname%\%computername%_eventLog_Application.evt >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\SecEvent.Evt %dirname%\%computername%_eventLog_Security.evt >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\config\SysEvent.Evt %dirname%\%computername%_eventLog_System.evt >> %dirname%\%computername%.txt
 
-	Tools\%tool_prefix%FGET.exe -extract %windir%\SchedLgU.txt %dirname%\%computername%_SchedLgU.txt >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\SchedLgU.txt %dirname%\%computername%_SchedLgU.txt >> %dirname%\%computername%.txt
 
-	GOTO Misc
+  GOTO Misc
 
 :Win7
-	ECHO [+] Win7
-	ECHO [-] Event logs
-	ECHO [-] Event logs >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Application.evtx %dirname%\%computername%_eventLog_Application.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Security.evtx %dirname%\%computername%_eventLog_Security.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\System.evtx %dirname%\%computername%_eventLog_System.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\OAlerts.evtx %dirname%\%computername%_eventLog_OAlerts.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TaskScheduler%4Operational.evtx %dirname%\%computername%_eventLog_TaskScheduler.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\microsoft-windows-RemoteDesktopServices-RemoteDesktopSessionManager%4Admin.evtx %dirname%\%computername%_eventLog_RDP-SessionManager.evtx >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx %dirname%\%computername%_eventLog_TerminalServices-LocalSessionManager.evtx >> %dirname%\%computername%.txt
+  ECHO [+] Win7
+  ECHO [-] Event logs
+  ECHO [-] Event logs >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Application.evtx %dirname%\%computername%_eventLog_Application.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Security.evtx %dirname%\%computername%_eventLog_Security.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\System.evtx %dirname%\%computername%_eventLog_System.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\OAlerts.evtx %dirname%\%computername%_eventLog_OAlerts.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TaskScheduler%4Operational.evtx %dirname%\%computername%_eventLog_TaskScheduler.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\microsoft-windows-RemoteDesktopServices-RemoteDesktopSessionManager%4Admin.evtx %dirname%\%computername%_eventLog_RDP-SessionManager.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx %dirname%\%computername%_eventLog_TerminalServices-LocalSessionManager.evtx >> %dirname%\%computername%.txt
 
-	Tools\%tool_prefix%FGET.exe -extract %windir%\Tasks\SchedLgU.txt %dirname%\%computername%_SchedLgU.txt >> %dirname%\%computername%.txt
-	GOTO Misc
+  Tools\%tool_prefix%FGET.exe -extract %windir%\Tasks\SchedLgU.txt %dirname%\%computername%_SchedLgU.txt >> %dirname%\%computername%.txt
+  GOTO Misc
 
 :Misc
-	ECHO [-] Misc.
-	ECHO [-] Misc. >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %systemroot%\system32\drivers\etc\hosts %dirname%\%computername%_hosts.txt >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\setupapi.log %dirname%\%computername%_setupapi.log >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\setupact.log %dirname%\%computername%_setupact.log >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%FGET.exe -extract %windir%\setuperr.log %dirname%\%computername%_setuperr.log >> %dirname%\%computername%.txt
-	::Tools\%tool_prefix%FGET.exe -extract %windir%\inf\setupapi.dev.log %dirname%\%computername%_setupapi.dev.log >> %dirname%\%computername%.txt
-	GOTO userReg
+  ECHO [-] Misc.
+  ECHO [-] Misc. >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %systemroot%\system32\drivers\etc\hosts %dirname%\%computername%_hosts.txt >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setupapi.log %dirname%\%computername%_setupapi.log >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setupact.log %dirname%\%computername%_setupact.log >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setuperr.log %dirname%\%computername%_setuperr.log >> %dirname%\%computername%.txt
+  ::Tools\%tool_prefix%FGET.exe -extract %windir%\inf\setupapi.dev.log %dirname%\%computername%_setupapi.dev.log >> %dirname%\%computername%.txt
+  GOTO userReg
 
 :userReg
-	ECHO [-] User's Registry
-	ECHO [-] User's Registry >> %dirname%\%computername%.txt
-	START /wait /min userReg.bat ^& EXIT
-	GOTO memAcquire
+  ECHO [-] User's Registry
+  ECHO [-] User's Registry >> %dirname%\%computername%.txt
+  START /wait /min userReg.bat ^& EXIT
+  GOTO memAcquire
 
 :memAcquire
-	ECHO [-] Memory Dump
-	START /wait /min memAcquire.bat ^& EXIT
-	GOTO Complete
+  ECHO [-] Memory Dump
+  START /wait /min memAcquire.bat ^& EXIT
+  GOTO Complete
 
 :Complete
-	ECHO [+] Collection completed at %DATE% %TIME%
-	ECHO [+] Collection completed at %DATE% %TIME% >> %dirname%\%computername%.txt
-	GOTO Compress
+  ECHO [+] Collection completed at %DATE% %TIME%
+  ECHO [+] Collection completed at %DATE% %TIME% >> %dirname%\%computername%.txt
+  GOTO Compress
 
 :Compress
-	ECHO [+] Compressing data
-	ECHO [+] Compressing data >> %dirname%\%computername%.txt
-	Tools\%tool_prefix%7z.exe a %dirname%.7z %dirname%
+  ECHO [+] Compressing data
+  ECHO [+] Compressing data >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%7z.exe a %dirname%.7z %dirname%
 
-	ECHO [+] Deleting uncompressed copy of data
-	ECHO [+] Deleting uncompressed copy of data >> %dirname%\%computername%.txt
-	ECHO [+] rmdir /s /q %dirname% >> %dirname%\%computername%.txt
-	rmdir /s /q %dirname%
-	EXIT
+  ECHO [+] Deleting uncompressed copy of data
+  ECHO [+] Deleting uncompressed copy of data >> %dirname%\%computername%.txt
+  ECHO [+] rmdir /s /q %dirname% >> %dirname%\%computername%.txt
+  rmdir /s /q %dirname%
+  EXIT
