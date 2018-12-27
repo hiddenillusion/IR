@@ -28,4 +28,5 @@ FOR /f "tokens=*" %%a IN ('reg query "hklm\software\microsoft\windows nt\current
 :User_Reg_Extract
 	for /F "tokens=*" %%a in ('echo %USERREGPATH%') do set newpath=%%a
 	::ECHO    [.] %USERREG%
-	Tools\%tool_prefix%fget -extract "%newpath%\NTUSER.DAT" %dirname%\%computername%_reg_NTUSER_%USERREG%
+	Tools\%tool_prefix%FGET.exe -extract "%newpath%\NTUSER.DAT" %dirname%\%computername%_reg_NTUSER_%USERREG%
+	Tools\%tool_prefix%FGET.exe -extract "%newpath%\AppData\Local\Microsoft\Windows\UsrClass.dat" %dirname%\%computername%_reg_UsrClass_%USERREG%
