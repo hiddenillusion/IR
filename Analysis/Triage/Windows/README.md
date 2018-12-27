@@ -40,7 +40,9 @@ Misc. | :x: | :ballot_box_with_check: | Compression of evidence once collected |
 
 ## Usage
 
-1. From an elevated command prompt, run `python WindowsTriage.py` . By default, the following will be collected:
+The main use case for this script is to point it at a mounted image to easily pull some sniper artifacts for later processing with additional tools.
+
+1. From an elevated command prompt, run `python WindowsTriage.py`
 
 # `ir_sniper.bat`
 
