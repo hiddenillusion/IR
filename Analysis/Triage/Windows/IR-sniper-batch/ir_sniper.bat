@@ -96,6 +96,7 @@ IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) ELSE (GOTO 64bit)
   ECHO [-] Tasks >> %dirname%\%computername%.txt
   mkdir %dirname%\Tasks\
   Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\Tasks %dirname%\Tasks >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%xcopy.exe /q /c /e %windir%\System32\Tasks %dirname%\Tasks >> %dirname%\%computername%.txt
   ECHO [-] Hashing
   ECHO [-] Hashing >> %dirname%\%computername%.txt
   Tools\%tool_prefix%md5deep.exe -r -s C:\ >> %dirname%\%computername%_md5.txt
@@ -116,7 +117,8 @@ IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) ELSE (GOTO 64bit)
   REM for some reason I don't think this copies everything...
   ECHO [-] Tasks >> %dirname%\%computername%.txt
   Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
-  Tools\%tool_prefix\x64\%Robocopy64.exe %windir%\System32\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\System32\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%\x64\Robocopy64.exe %windir%\SysWOW64\Tasks %dirname%\Tasks /E >> %dirname%\%computername%.txt
   ECHO [-] Hashing
   ECHO [-] Hashing >> %dirname%\%computername%.txt
   Tools\%tool_prefix%md5deep64.exe -r -s C:\ >> %dirname%\%computername%_md5.txt
@@ -157,10 +159,10 @@ IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) ELSE (GOTO 64bit)
   ECHO [-] Misc.
   ECHO [-] Misc. >> %dirname%\%computername%.txt
   Tools\%tool_prefix%FGET.exe -extract %systemroot%\system32\drivers\etc\hosts %dirname%\%computername%_hosts.txt >> %dirname%\%computername%.txt
-  Tools\%tool_prefix%FGET.exe -extract %windir%\setupapi.log %dirname%\%computername%_setupapi.log >> %dirname%\%computername%.txt
-  Tools\%tool_prefix%FGET.exe -extract %windir%\setupact.log %dirname%\%computername%_setupact.log >> %dirname%\%computername%.txt
-  Tools\%tool_prefix%FGET.exe -extract %windir%\setuperr.log %dirname%\%computername%_setuperr.log >> %dirname%\%computername%.txt
-  ::Tools\%tool_prefix%FGET.exe -extract %windir%\inf\setupapi.dev.log %dirname%\%computername%_setupapi.dev.log >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setupapi.log %dirname%\%computername%_setupapi.log >> %dirname%\%computername%_setupapi.log
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setupact.log %dirname%\%computername%_setupact.log >> %dirname%\%computername%_setupact.log
+  Tools\%tool_prefix%FGET.exe -extract %windir%\setuperr.log %dirname%\%computername%_setuperr.log >> %dirname%\%computername%_setuperr.log
+  Tools\%tool_prefix%FGET.exe -extract %windir%\inf\setupapi.dev.log %dirname%\%computername%_setupapi.dev.log >> %dirname%\%computername%_setupapi.dev.log
   GOTO userReg
 
 :userReg
