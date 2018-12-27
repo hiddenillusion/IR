@@ -148,6 +148,7 @@ IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) ELSE (GOTO 64bit)
   Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TaskScheduler%4Operational.evtx %dirname%\%computername%_eventLog_TaskScheduler.evtx >> %dirname%\%computername%.txt
   Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\microsoft-windows-RemoteDesktopServices-RemoteDesktopSessionManager%4Admin.evtx %dirname%\%computername%_eventLog_RDP-SessionManager.evtx >> %dirname%\%computername%.txt
   Tools\%tool_prefix%FGET.exe -extract %windir%\System32\winevt\Logs\Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx %dirname%\%computername%_eventLog_TerminalServices-LocalSessionManager.evtx >> %dirname%\%computername%.txt
+  Tools\%tool_prefix%FGET.exe -extract "%windir%\System32\winevt\Logs\Windows Powershell.evtx" "%dirname%\%computername%_eventLog_Windows Powershell.evtx" >> %dirname%\%computername%.txt
 
   Tools\%tool_prefix%FGET.exe -extract %windir%\Tasks\SchedLgU.txt %dirname%\%computername%_SchedLgU.txt >> %dirname%\%computername%.txt
   GOTO Misc
