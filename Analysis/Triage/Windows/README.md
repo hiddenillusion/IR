@@ -68,6 +68,7 @@ Tool | Path + Required Name for Script | Source
 `Robocopy64.exe` | `Tools\ir_Robocopy64.exe` | 64 bit version available within the _%windir%\SysWOW64\_ directory on a Windows system
 `xcopy.exe` | `Tools\ir_xcopy.exe` | 32 bit version available within the _%windir%\System32\_ directory on a Windows system
 
+  > Note: Using versions of these tools from newer Windows systems may result in errors on older systems. It's recommended to use versions from ~same OS versions you're targeting.
 
 ### Notes
 - Using the DMP format of `DumptIt` generated a BSOD in Windows XP SP2
