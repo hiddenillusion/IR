@@ -19,15 +19,17 @@ fi
 
 # Change working directory to triage directory
 cd $dirname
-outty="$Date.txt"
+output_file="collection_$Date.txt"
+errors_file="errors_$output_file"
 
 echo "[+] Collection Started: $Date"
-echo "[+] Collection Started: $Date" >> $outty
-echo "======================================================" >> $outty
+echo "[+] Collection Started: $Date" >> $output_file
+echo "======================================================" >> $output_file
 
 # Get all bash history files before they're modified too much
-
-find / -name ".bash_history" | while read f; do cat $f > `echo $f | sed 's/\//_/g'`.txt;done
+#   This will catch most shells (.bash_history, .sh_history, .tsch_history etc.) as well as some applications (e.g. .mysql_history)
+find / \( -type d -name export -prune \) -o \( -type d -name 'proc' -prune \) -o \( -type d -name 'oa' -prune \) -o \( -type d -name 'od' -prune \) -o -name *_history -print | while read f; do cat $f > `echo $f |
+ sed 's/\//_/g'`.txt;done
 
 cmds=("ps -eaf"
   "w"
@@ -57,6 +59,7 @@ cmds=("ps -eaf"
   "netstat -rn"
   "mount"
   "crontab -l"
+  "uname -a"
 );
 
 gen_files=("/etc/passwd"
@@ -83,20 +86,20 @@ log_dirs=("acct"
 # Commands that are having their output put into the main file
 echo "[-] Running triage commands"
 for c in "${cmds[@]}"; do
-  echo "------------------------------------------------------" >> $outty
-  echo "$c" >> $outty
-  echo "------------------------------------------------------" >> $outty
-  $c >> $outty
+  echo "------------------------------------------------------" >> $output_file
+  echo "$c" >> $output_file
+  echo "------------------------------------------------------" >> $output_file
+  $c >> $output_file 2>>$errors_file
 done
 
 # Commands that are having their output put into their own file
 echo '[-] Grabbing general files of interest'
 for gf in "${gen_files[@]}"; do
-  echo "------------------------------------------------------" >> $outty
-  echo "Attempting to grab: $gf" >> $outty
-  echo "------------------------------------------------------" >> $outty
+  echo "------------------------------------------------------" >> $output_file
+  echo "Attempting to grab: $gf" >> $output_file
+  echo "------------------------------------------------------" >> $output_file
   output=`echo $gf | sed s'/[ \/]/_/g'`.txt
-  cat $gf 1> $output 2>>$outty
+  cat $gf 1> $output 2>>$errors_file
 done
 
 # Determine where we're looking
@@ -108,25 +111,23 @@ fi
 
 echo "[-] Grabbing files of interest from: $DIR"
 for lf in "${log_files[@]}"; do
-  echo "------------------------------------------------------" >> $outty
-  echo "$DIR$lf" >> $outty
-  echo "------------------------------------------------------" >> $outty
-  cp -f --parents $DIR$lf* . 2>>$outty
-  #output=`echo $DIRlf | sed s'/[ \/]/_/g'`.txt
-  #cat $DIR$lf 1> $output 2>>$outty
+  echo "------------------------------------------------------" >> $output_file
+  echo "$DIR$lf" >> $output_file
+  echo "------------------------------------------------------" >> $output_file
+  cp -f --parents $DIR$lf* . 2>>$errors_file
 done
 
 for ld in "${log_dirs[@]}"; do
-  echo "------------------------------------------------------" >> $outty
-  echo "$DIR$ld" >> $outty
-  echo "------------------------------------------------------" >> $outty
-  cp -rf --parents $DIR$ld . 2>>$outty
+  echo "------------------------------------------------------" >> $output_file
+  echo "$DIR$ld" >> $output_file
+  echo "------------------------------------------------------" >> $output_file
+  cp -rf --parents $DIR$ld . 2>>$errors_file
 done
 
 echo "[-] Generating file listing"
-find / 2>>$outty | while read fpath; do stat -c "%n %F %s %A %u %U %g %G %h %m %i %W %X %Y %Z"
-"$fpath" >> file_listing.txt; done
+find / \( -type d -name 'export' -print \) -o \( -type d -name 'oa' -prune \) -o \( -type d -name 'od' -prune \) -o \( -type d -name 'proc' -prune \) -o -print 2>>$errors_file | xargs stat -c "%n,%F,%s,%A,%u,%U,%g,%G,%h,%m,%i,%W,%X,%Y,%Z" >> file_listing.csv
 
-echo "======================================================" >> $outty
+echo "======================================================" >> $output_file
+Date=`date +%m-%d-%Y_%T`
 echo "[+] Collection Finished: $Date"
-echo "[+] Collection Finished: $Date" >> $outty
+echo "[+] Collection Finished: $Date" >> $output_file
