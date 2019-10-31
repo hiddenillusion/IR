@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ####################################################
 # LinuxTriage was created by Glenn P. Edwards Jr.
@@ -67,9 +67,9 @@ misc_files=("authorized_keys"
 #		have proper privileges, e.g. - not run w/ sudo
 cmds=("ps auwwx"
 	"netstat -tulpan"
-	"ps -eaf"	
+	"ps -eaf"
 	"ps -eo pid,ppid,start,etime,user,comm,args"
-	"pstree -A -a -p"	
+	"pstree -A -a -p"
 	"netstat -rn"
 	"lsof -n"
 	"lsof -w"
@@ -91,7 +91,7 @@ cmds=("ps auwwx"
 	"id"
 	"uname"
 	"uname -a"
-	"hostid"	
+	"hostid"
 	"cat /proc/version"
 	"cat /proc/meminfo"
 	"cat /proc/uptime"
