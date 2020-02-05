@@ -19,7 +19,6 @@ import logging
 from zipfile import ZipFile
 from shutil import copytree, copy, rmtree
 
-
 def acceptable_size(filepath):
   artifact_size = os.path.getsize(filepath)
   unacceptable_sizes = {}
@@ -31,11 +30,10 @@ def acceptable_size(filepath):
     if filepath.endswith(artifact_ext):
       if artifact_size <= int(unacceptable_size):
         _logger.warn(
-            "File size is considered unacceptable, skipping '{0}'".format(filepath))
+          "File size is considered unacceptable, skipping '{0}'".format(filepath))
         return False
 
 # this helps with size but still much larger than something like 7z
-
 
 def compress_artifacts(filepath, destination_path, zip_name=None):
   if not zip_name:
@@ -47,14 +45,12 @@ def compress_artifacts(filepath, destination_path, zip_name=None):
     except Exception as err:
       _logger.error("Error compressing '{0}'".format(filepath))
 
-
 def convert_paths(filepath):
   if not os.name == "nt":
     # os.path.join will interpret this as the path is it leads with a slash
     return filepath.replace('\\', '/').lstrip('/')
   else:
     return filepath
-
 
 def copy_dir(filepath, destination_path):
   safe_dir_path = get_safe_path(filepath)
@@ -68,8 +64,7 @@ def copy_dir(filepath, destination_path):
     _logger.error("IOError on '{0}'".format(filepath))
     if err.errno == 13:
       _logger.warning(
-          "Permission denied on '{0}', elevate privileges?".format(filepath))
-
+        "Permission denied on '{0}', elevate privileges?".format(filepath))
 
 def copy_files(filepath, destination_path):
   create_dir(destination_path)
@@ -81,7 +76,6 @@ def copy_files(filepath, destination_path):
   except OSError as err:
     _logger.error("Error copying '{0}".format(filepath))
 
-
 def create_dir(dir_name):
   if not os.path.exists(dir_name):
     _logger.debug("Creating output dir: {0}".format(dir_name))
@@ -89,7 +83,6 @@ def create_dir(dir_name):
       os.makedirs(dir_name)
     except Exception as err:
       _logger.error("Unable to create directory")
-
 
 def get_artifacts(root, artifact_files, output_dir):
   # Process artifact files with exact locations
@@ -104,7 +97,6 @@ def get_artifacts(root, artifact_files, output_dir):
     else:
       _logger.debug("Skipping non-existing artifact '{0}'".format(artifact))
 
-
 def get_artifact_folders(root, artifact_folders, output_dir):
   #     - dest folder must not exist already with shutil.copytree
   for folder in artifact_folders:
@@ -117,7 +109,7 @@ def get_artifact_folders(root, artifact_folders, output_dir):
         artifact_folder = os.path.join(root, new_folder)
         if os.path.exists(artifact_folder):
           _logger.debug("Copying '{0}' files from {1}'".format(
-              ext_lst, artifact_folder))
+            ext_lst, artifact_folder))
           for fpath in RecursePath(artifact_folder):
             for ext in ext_lst:
               if fpath.endswith(ext):
@@ -140,7 +132,6 @@ def get_artifact_folders(root, artifact_folders, output_dir):
           continue
       else:
         _logger.debug("Skipping non-existing artifact '{0}'".format(folder))
-
 
 def get_all_user_paths(root):
   discovered_user_paths = []
@@ -172,7 +163,6 @@ def get_all_user_paths(root):
 
   return False
 
-
 def get_specific_artifacts(user_paths, user_artifacts, output_dir):
   try:
     for user_path in user_paths:
@@ -195,7 +185,6 @@ def get_specific_artifacts(user_paths, user_artifacts, output_dir):
     if not err.errno == 22:  # path not there
       _logger.error(err)
     pass
-
 
 def doWork(path, output_dir):
   if os.name == "nt":
@@ -223,6 +212,7 @@ def doWork(path, output_dir):
     '\\Windows\\System32\\config\\SECURITY',
     '\\Windows\\System32\\config\\SOFTWARE',
     '\\Windows\\System32\\config\\SYSTEM',
+    '\\Windows\\System32\\sru\\SRUDB.dat',
     '\\Windows\\System32\\drivers\\etc\\hosts',
     # '\\Windows\\System32\\wbem\\Repository\\Objects.data',
     # '\\Windows\\System32\\winevt\\Logs\\Application.evtx',
@@ -290,11 +280,9 @@ def doWork(path, output_dir):
   # Process artifact folders
   get_artifact_folders(root, artifact_folders, output_dir)
 
-
 def get_safe_path(filepath):
   no_bueno = ['<', '>', '{', '}', '|', ':', ';', '\\', '/']
   return ''.join(['_' if c in no_bueno else c for c in os.path.abspath(filepath)])
-
 
 def RecursePath(path):
   if os.path.exists(path):
@@ -316,9 +304,7 @@ def RecursePath(path):
       else:
         _logger.debug("Symlink provided '{0}'".format(path))
 
-
 def SetupLogger(loggerName, logLevel, logFile):
-  # import sys, time, logging
   logger = logging.getLogger(loggerName)
 
   if logLevel == "INFO":
@@ -394,5 +380,5 @@ if __name__ == '__main__':
     except Exception as err:
         sys.stdout.write("[!] Could not delete uncompressed artifacts '{0}'\n".format(output_dir))
         sys.stdout.write("{0}".format(err))
-    '''
+  '''
   #sys.stdout.write("[+] Don't forget to delete uncompressed artifacts '{0}'\n".format(zip_name))
