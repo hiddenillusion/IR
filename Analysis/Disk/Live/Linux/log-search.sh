@@ -1,6 +1,6 @@
 #!/bin/bash
 # created by Glenn P. Edwards Jr.
-#      http://hiddenillusion.blogspot.com
+#      https://hiddenillusion.github.io
 #               @hiddenillusion
 #	(while at FireEye)
 # Version 0.0.3
@@ -26,7 +26,7 @@ fi
 
 consolidate() {
 	echo "[-] Consolidating tmp files"
-	if ! [[ `lsof | grep $safe_query &> /dev/null` ]]; then                
+	if ! [[ `lsof | grep $safe_query &> /dev/null` ]]; then
 		rm "$forked_pids"
 		# to handle spaces in file paths
 		OFS="$IFS"
@@ -56,15 +56,15 @@ looper() {
 			if [ $? -eq 0 ]; then
 				touch $tmp_file
 				echo "[-] PID '$p' is still active"
-				sleep 2s			
+				sleep 2s
 			else
 				#echo "[i] PID '$p' not active, deleting"
-				sed -i '/$p/d' "$forked_pids"	
+				sed -i '/$p/d' "$forked_pids"
 			fi
 		done
 
 	done
-	
+
 	consolidate
 }
 
@@ -92,7 +92,7 @@ cat "$keywords" | while read query; do
 		if [ $out_dir_last_chr == "/" ]; then
 			outdir=$(echo $outdir | sed 's/.$//')
 		fi
-	
+
 		# replace any special characters not allowed in a filename for Windows (http://support.microsoft.com/kb/177506) & spaces since they cause issues with paths
 		safe_query=$(echo $query | sed 's/[\\\/:*?\"<>\| ]/_/g')
 		outty="$outdir/$safe_query.txt"
@@ -124,4 +124,3 @@ total=$(expr $toc - $tic)
 min=$(expr $total / 60)
 sec=$(expr $total % 60)
 echo "Processing took :" $min"m":$sec"s"
-

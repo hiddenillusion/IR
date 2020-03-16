@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # created by Glenn P. Edwards Jr.
-#   http://hiddenillusion.blogspot.com
+#   https://hiddenillusion.github.io
 #       @hiddenillusion
 # Version 0.0.2
 # Date: 10-09 -2014
@@ -43,7 +43,7 @@ def create_dir(folder):
 			os.makedirs(folder)
 		except Exception: #change this to a specific one?
 			print "[!]",e
-			sys.exit(1)    
+			sys.exit(1)
 	else:
 		print "[-] Folder already exists:",folder
 
@@ -125,7 +125,7 @@ class Process:
 	Convenience class that gets common data and performs
 	common operations
 	"""
-    
+
 	def __init__(self, evidence, logLevel=None):
 		if not logLevel:
 			logLevel = "INFO"
@@ -278,15 +278,15 @@ class General:
     def mount_info(self):
 	self._data = {'mount': '/etc/mtab',
 	}
-	
+
 	pass
 
-		
+
     def volume_info(self):
 	self._log.info("Getting volume information")
 	self._data = {'volume_label': '/etc/fstab',
 	}
-	
+
 	proc = Process(self._evidence)
 	for line in proc.read_contents(self._data):
 		if line:
@@ -320,7 +320,7 @@ class Timeline:
 	def __init__(self, evidence, output_dir, logLevel=None):
 		"""
 		@evidence: Path to mounted image
-		@output_dir: Path to output	
+		@output_dir: Path to output
 		"""
 		if not logLevel:
 			logLevel = "INFO"
@@ -340,7 +340,7 @@ class Timeline:
 		import subprocess
 		opts = " -r -m '/' "
 		self._body_file = os.path.join(self._output_dir, 'fls.body')
-		cmd =  'fls' + opts + self._device + ' > ' + self._body_file 
+		cmd =  'fls' + opts + self._device + ' > ' + self._body_file
 
 		self._log.info("Running 'fls'")
 		self._log.debug("cmd............: {0}".format(cmd))
@@ -362,7 +362,7 @@ class Timeline:
 
 		self._log.info("Running 'l2t'")
 		self._log.debug("cmd............: {0}".format(cmd))
-	
+
 		try:
 			p = subprocess.Popen(cmd,stderr=subprocess.PIPE,stdout=subprocess.PIPE,shell=True)
 			p.wait()
@@ -383,7 +383,7 @@ class Timeline:
 
 				self._log.info("Running 'mactime' over body_file")
 				self._log.debug("cmd............: {0}".format(cmd))
-	
+
 				try:
 					p = subprocess.Popen(cmd,stderr=subprocess.PIPE,stdout=subprocess.PIPE,shell=True)
 					p.wait()
@@ -421,7 +421,7 @@ class Web_Server:
 		for cat, loc in self._artifacts.iteritems():
 			self._results[loc] = str(proc.find_artifact(loc))
 		return self._results
-	
+
     # web shell scan
 
 class SQL():
@@ -431,7 +431,7 @@ def main():
 	import argparse
 
 	parser = argparse.ArgumentParser(description='Grabs data of interest from a mounted linux system & kicks off additional analysis processes')
-	parser.add_argument('-c', '--case', metavar='[Case#]', help='Case number to use', required=True)    
+	parser.add_argument('-c', '--case', metavar='[Case#]', help='Case number to use', required=True)
 	parser.add_argument('-d', '--debug', action='store_true', help='Enable debug logging', required=False)
 	parser.add_argument('-i', '--input', metavar='[Path]', help='Path to mounted image', required=True)
 	parser.add_argument('-o', '--output', metavar='[Output]', help='Output file to write the to.  \
@@ -441,11 +441,11 @@ def main():
 
 	# add this as switch
 	if args['debug']:
-		logLevel = "DEBUG"  
+		logLevel = "DEBUG"
 	else:
 		logLevel = "INFO"
 
-	_log = logger("auto_dfir_linux", logLevel) 
+	_log = logger("auto_dfir_linux", logLevel)
 	case = args['case']
 	tag = args['tag']
 	evidence = os.path.abspath(args['input'])
@@ -480,7 +480,7 @@ def main():
 	if not current_user == "root":
 		_log.debug("Currently running as the user '{0}', not root".format(current_user))
 	else:
-		_log.debug("Currently running as the user 'root'")        
+		_log.debug("Currently running as the user 'root'")
 
 	_log.info("Processing.....: {0}".format(evidence))
 	_log.info("Device.........: {0}".format(get_device(evidence)))
@@ -513,4 +513,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-

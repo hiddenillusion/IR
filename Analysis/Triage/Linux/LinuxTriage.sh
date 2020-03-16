@@ -2,7 +2,7 @@
 
 ####################################################
 # LinuxTriage was created by Glenn P. Edwards Jr.
-#	 	http://hiddenillusion.blogspot.com
+#	 	https://hiddenillusion.github.io
 # 				@hiddenillusion
 # Date: 2013-11-19
 # (While at FireEye)
@@ -25,7 +25,7 @@ if [ ! -d dirname ]; then
 	mkdir $dirname
 fi
 
-safe_date=`date +%Y-%m-%d_%T`
+safe_date=`date +%Y-%m-%d_%T_%Z`
 outty="process.log"
 triage_dir=$dirname/`echo $safe_date | sed s'/:/./g'`
 

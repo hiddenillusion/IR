@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# original source : @sk3tchymoos3 
+# original source : @sk3tchymoos3
 # modified by Glenn P. Edwards Jr.
-#	http://hiddenillusion.blogspot.com
+#	https://hiddenillusion.github.io
 #       	@hiddenillusion
 # Date: 12-28-2012
 
@@ -84,7 +84,7 @@ def specific(f):
             p = subprocess.Popen(cmd,stderr=subprocess.PIPE,stdout=subprocess.PIPE,shell=True)
             for line in p.communicate():
                 f.write(line)
-        else: 
+        else:
             err = "[!] Doesn't exist: '%s'" % loc
             print err
             f.write('\n' + err + '\n')

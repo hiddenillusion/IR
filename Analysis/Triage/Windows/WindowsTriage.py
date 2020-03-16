@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # created by Glenn P. Edwards Jr.
-#   http://hiddenillusion.blogspot.com
+#   https://hiddenillusion.github.io
 #       @hiddenillusion
 # Date: 2014-12-29
 # (while at FireEye)

@@ -3,6 +3,7 @@
 ####################################################
 # Solaris 10 Triage script.
 # Original script created by Glenn P. Edwards Jr.
+#   https://hiddenillusion.github.io
 # Modified by Ian Ahl
 # Based on research from Matt Pepe
 # Date: 12/04/2014
@@ -11,7 +12,7 @@
 
 # Some of these commands need root perms
 
-Date=`date +%m-%d-%Y_%T`
+Date=`date +%m-%d-%Y_%T_%Z`
 dirname=`hostname`
 if [ ! -d dirname ]; then
   mkdir $dirname
