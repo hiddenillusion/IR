@@ -162,7 +162,7 @@ echo "[-] Getting history files"
 # Get all *history*-ish files before they're modified too much
 for hf in "${history_files[@]}"; do
   echo "[-] Looking for $hf" >> $output_file
-  find /home /root -type f -name $hf -exec cp --parents {} . \; 2>$error_file
+  find /home /root -type f -name $hf -exec cp --parents {} . \; 2>>$error_file
 done
 
 echo "[-] Running basic triage commands"
@@ -186,7 +186,7 @@ if [ "${#etc[@]}" -gt 0 ]; then
   echo "[-] Copying /etc files of interest"
   for e in "${etc[@]}"; do
     echo "[-] Looking for $e" >> $output_file
-    find /etc -type f -name $e -exec cp --parents --no-preserve=mode,ownership {} . \; 2>$error_file
+    find /etc -type f -name $e -exec cp --parents --no-preserve=mode,ownership {} . \; 2>>$error_file
   done
 fi
 
@@ -194,7 +194,7 @@ if [ "${#var_log[@]}" -gt 0 ]; then
   echo "[-] Copying /var/log files of interest"
   for vl in "${var_log[@]}"; do
     echo "[-] Looking for $vl" >> $output_file
-    find /var/log -type f -name $vl -exec cp --parents --no-preserve=mode,ownership {} . \; 2>$error_file
+    find /var/log -type f -name $vl -exec cp --parents --no-preserve=mode,ownership {} . \; 2>>$error_file
   done
 fi
 
@@ -214,7 +214,7 @@ if [ "${#misc_files[@]}" -gt 0 ]; then
   echo "[-] Copying misc. files of interest"
   for mf in "${misc_files[@]}"; do
     echo "[-] Looking for $mf" >> $output_file
-    find /etc /home /root -type f -name $mf -exec cp --parents --no-preserve=mode,ownership {} . \; 2>$error_file
+    find /etc /home /root -type f -name $mf -exec cp --parents --no-preserve=mode,ownership {} . \; 2>>$error_file
   done
 fi
 
