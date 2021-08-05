@@ -22,9 +22,7 @@ fi
 initial_dir=`pwd`
 evidence_dir=`hostname`
 
-if [ ! -d dirname ]; then
-  mkdir $evidence_dir
-fi
+mkdir -p $evidence_dir
 
 # Change working directory to triage directory
 cd $evidence_dir
