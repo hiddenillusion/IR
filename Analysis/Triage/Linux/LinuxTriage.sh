@@ -230,8 +230,8 @@ echo "------------------------------------------------------" >> $output_file
 fdisk -l | grep -v Disk | grep /dev | awk '{print $1}' | while read d; do hdparm -I $d &>> $output_file; done
 
 echo "======================================================" >> $output_file
-echo "[+] Collection Finished: $Date"
-echo "[+] Collection Finished: $Date" >> $output_file
+echo "[+] Collection Finished: `date`"
+echo "[+] Collection Finished: `date`" >> $output_file
 
 echo "[+] Compressing evidence"
 cd "$initial_dir"
