@@ -53,8 +53,7 @@ run_cleanup(){
 
   echo "[+] Compressing evidence" | tee -a ${OUTPUT_FILE}
   cd "${START_DIR}"
-  COMPRESS_EVIDENCE_CMD=(tar -Sczf)
-  "${COMPRESS_EVIDENCE_CMD[@]}" "${EVIDENCE_COLLECTION_FILE}" "${EVIDENCE_DIR}"
+  tar -Sczf "${EVIDENCE_COLLECTION_FILE}" "${EVIDENCE_DIR}"
 
   if [ "${TEST_MODE}" = "false" ]; then
     echo "[+] Removing collection folder"
@@ -77,18 +76,15 @@ run_copy_misc_files() {
     echo "[+] Copying misc. files of interest" | tee -a ${OUTPUT_FILE}
     for _misc_file in "${MISC_FILES_TO_ACQUIRE[@]}"; do
       echo -e "\t[-] Looking for: $_misc_file" >> ${OUTPUT_FILE}
-      MISC_FILES_TO_ACQUIRE_CMD=(find /etc /home /root -type f -name $_misc_file -exec cp --parents --no-preserve=mode,ownership {} . \;)
-      "${MISC_FILES_TO_ACQUIRE_CMD[@]}" 2>>${ERROR_FILE}
+      find /etc /home /root -type f -name $_misc_file -exec cp --parents --no-preserve=mode,ownership {} . \; 2>> ${ERROR_FILE}
     done
   fi
 }
 
 run_create_filelisting() {
   echo "[+] Generating file listing" | tee -a ${OUTPUT_FILE}
-  FILE_LISTING_CMD=("find / -print0")
-  FILE_LISTING_TIMELINE_CMD=("xargs -0 stat -c %n,%F,%s,%A,%u,%U,%g,%G,%h,%m,%i,%W,%X,%Y,%Z")
-  format_section_separator "$FILE_LISTING_CMD | $FILE_LISTING_TIMELINE_CMD"
-  ${FILE_LISTING_CMD[@]} | ${FILE_LISTING_TIMELINE_CMD[@]} 1>>file_listing.csv 2>>file_listing.errors
+  format_section_separator "find / -print0 | xargs -0 stat -c %n,%F,%s,%A,%u,%U,%g,%G,%h,%m,%i,%W,%X,%Y,%Z"
+  find / -print0 | xargs -0 stat -c %n,%F,%s,%A,%u,%U,%g,%G,%h,%m,%i,%W,%X,%Y,%Z 1>> file_listing.csv 2>> file_listing.errors
 }
 
 run_copy_directories() {
@@ -96,8 +92,7 @@ run_copy_directories() {
     echo "[-] Copying directories of interest" | tee -a ${OUTPUT_FILE}
     for _dir in "${DIRECTORIES_TO_COPY[@]}"; do
       echo -e "\t[-] Looking for: $_dir" >> ${OUTPUT_FILE}
-      COPY_DIRECTORIES_CMD=(cp -r --parents --no-preserve=mode,ownership)
-      "${COPY_DIRECTORIES_CMD[@]}" "$_dir" . 2>>${ERROR_FILE}
+      cp -r --parents --no-preserve=mode,ownership "$_dir" . 2>> ${ERROR_FILE}
     done
   fi
 }
@@ -106,8 +101,7 @@ run_copy_history_files() {
   echo "[+] Getting history files" | tee -a ${OUTPUT_FILE}
   for _history_file in "${HISTORY_FILES_TO_ACQUIRE[@]}"; do
     echo -e "\t[-] Looking for: $_history_file" >> ${OUTPUT_FILE}
-    COPY_HIST_FILES_CMD=(find /home /root -type f -name $_history_file -exec cp --parents --no-preserve=mode,ownership {} . \;)
-    "${COPY_HIST_FILES_CMD[@]}" 2>>${ERROR_FILE}
+    find /home /root -type f -name $_history_file -exec cp --parents --no-preserve=mode,ownership {} . \; 2>> ${ERROR_FILE}
   done
 }
 
@@ -116,8 +110,7 @@ run_copy_specific_files() {
     echo "[+] Copying specific files of interest" | tee -a ${OUTPUT_FILE}
     for _specific_file in "${SPECIFIC_FILES_TO_ACQUIRE[@]}"; do
       echo -e "\t[-] Looking for: $_specific_file" >> ${OUTPUT_FILE}
-      COPY_SPECIFIC_FILES_CMD=(cp --parents --no-preserve=mode,ownership $_specific_file .)
-      "${COPY_SPECIFIC_FILES_CMD[@]}" 2>>${ERROR_FILE}
+      cp --parents --no-preserve=mode,ownership $_specific_file . 2>> ${ERROR_FILE}
     done
   fi
 }
@@ -129,8 +122,7 @@ run_get_file_contents() {
       echo -e "\t[-] Looking for: $_file_to_read" >> ${OUTPUT_FILE}
       if [ -f $_file_to_read ]; then
         output=`echo $_file_to_read | sed s'/[ \/]/_/g'`
-        READ_FILE_CMD=(cat)
-        "${READ_FILE_CMD[@]}" $_file_to_read 1> $output 2>>${ERROR_FILE}
+        cmd $_file_to_read 1> $output 2>>${ERROR_FILE}
       fi
     done
   fi
@@ -147,7 +139,7 @@ run_setup() {
 }
 
 run_show_help() {
-  echo "Mandiant shell script to retrieve forensic artifacts."
+  echo "Shell script to retrieve forensic artifacts."
   echo
   echo "1. Change the file mode to allow executing"
   echo -e "\t chmod +x $0"
