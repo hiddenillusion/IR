@@ -53,8 +53,7 @@ run_cleanup(){
 
   echo "[+] Compressing evidence" | tee -a ${OUTPUT_FILE}
   cd "${START_DIR}"
-  COMPRESS_EVIDENCE_CMD=(tar -Sczf)
-  "${COMPRESS_EVIDENCE_CMD[@]}" "${EVIDENCE_COLLECTION_FILE}" "${EVIDENCE_DIR}"
+  tar -Sczf "${EVIDENCE_COLLECTION_FILE}" "${EVIDENCE_DIR}"
 
   if [ "${TEST_MODE}" = "false" ]; then
     echo "[+] Removing collection folder"
